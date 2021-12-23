@@ -1,27 +1,47 @@
-import sys, pyautogui, time, math
-from threading import Thread
-from PyQt5.QtWidgets import QApplication
+import time, math, ctypes #importing standard libaries
+import pyautogui, tkinter  #importing pyautogui for logging mouse position and tkinter for calculating the dpi (installed with pip install tk)
+from threading import Thread #importing threading libary to enalbe multiple threads
 
 class movlen:
-    app = QApplication(sys.argv)
-    mouse_events = []
-    x_nums = []
-    y_nums = []
-    fulllengh_nums = []
-    pixelsize = 0
-    cmx = 0
-    cmy = 0    
-    full_len = 0
-    
-
     def __init__(self) -> None:
-        pass
+        self.x_nums = []
+        self.y_nums = []
+        self.fulllengh_nums = []
+        self.pixelsize = 0
+        self.cmx = 0
+        self.cmy = 0    
+        self.full_len = 0
+
     def get_screensize(self):
-        width, height= pyautogui.size()
-        screen = self.app.screens()[0]
-        _dpi_ = screen.physicalDotsPerInch()
-        self.pixelsize = ((width / _dpi_) * 2.56) / width
-        #self.app.quit()
+        #https://stackoverflow.com/questions/54271887/calculate-screen-dpi
+        # gets screensize
+        width, _ = pyautogui.size()
+
+        # convertion from millimeters to inches
+        MM_TO_IN = 0.0393700787
+        # Set process DPI awareness
+        ctypes.windll.shcore.SetProcessDpiAwareness(1)
+        # Create a tkinter window
+        root = tkinter.Tk()
+        # Get a DC from the window's HWND
+        dc = ctypes.windll.user32.GetDC(root.winfo_id())
+        # The the monitor phyical width
+        # (returned in millimeters then converted to inches)
+        mw = ctypes.windll.gdi32.GetDeviceCaps(dc, 4) * MM_TO_IN
+        # The the monitor phyical height
+        mh = ctypes.windll.gdi32.GetDeviceCaps(dc, 6) * MM_TO_IN
+        # Get the monitor horizontal resolution
+        dw = ctypes.windll.gdi32.GetDeviceCaps(dc, 8)
+        # Get the monitor vertical resolution
+        dh = ctypes.windll.gdi32.GetDeviceCaps(dc, 10)
+        # Destroy the window
+        root.destroy()
+
+        # Diagonal DPI calculated using Pythagoras
+        ddpi = math.hypot(dw, dh) / math.hypot(mw, mh)
+
+        # calculates the pixelsize based on the dpi
+        self.pixelsize = ((width / ddpi) * 2.56) / width
 
     def logmousemov(self):
         lastposx = 0
@@ -125,13 +145,11 @@ class movlen:
     def main(self):
         cmd_thread = Thread(target=self.cmd)
         cmd_thread.start()
-        mousethread = Thread(target=self.logmousemov)
-        mousethread.start()
-        clear = Thread(target=self.autosave)
-        clear.start()
+        mouselog_thread = Thread(target=self.logmousemov)
+        mouselog_thread.start()
+        autosave_thread = Thread(target=self.autosave)
+        autosave_thread.start()
         self.get_screensize()
-        self.convert(103230, "temp")
-
 
 if __name__ == "__main__":
     mov = movlen()
