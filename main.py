@@ -11,7 +11,7 @@ class movlen:
         self.cmx = 0
         self.cmy = 0    
         self.full_len = 0
-
+   
     def get_screensize(self):
         #https://stackoverflow.com/questions/54271887/calculate-screen-dpi
         # gets screensize
