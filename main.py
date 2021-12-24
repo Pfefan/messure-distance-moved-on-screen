@@ -12,6 +12,7 @@ class movlen:
         self.cmy = 0    
         self.full_len = 0
         self.save_data = {}
+
    
     def get_screensize(self):
         #https://stackoverflow.com/questions/54271887/calculate-screen-dpi
@@ -149,24 +150,20 @@ class movlen:
             json.dump(self.save_data, outfile)
     
     def load_data(self):        
-        try:
-            with open ('data.json', 'r+') as jsonfile:
-                tempkeys = json.load(jsonfile)
-                if(tempkeys == None) or (tempkeys == {}):
-                    pass
-                else:
-                    self.save_data = tempkeys
-                    print(self.save_data[0])
-                    self.cmy = self.save_data[1]
-                    self.full_len = self.save_data[2]
-        except:
-            with open('data.json', 'w+') as save:
-                json.dump(self.save_data, save)
+        with open ('data.json', 'r+') as jsonfile:
+            tempkeys = json.load(jsonfile)
+            if(tempkeys == None) or (tempkeys == {}):
+                pass
+            else:
+                self.save_data = tempkeys
+                self.cmx = self.save_data["pixel_x"]
+                self.cmy = self.save_data["pixel_y"]
+                self.full_len = self.save_data["pixel_full_lengh"]
 
 
     def autosave(self):
         while(True):
-            #self.savedata()
+            self.savedata()
             time.sleep(300)
                 
     def main(self):
