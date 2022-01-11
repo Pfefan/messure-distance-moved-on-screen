@@ -7,11 +7,12 @@ class movlen:
         self.x_nums = []
         self.y_nums = []
         self.fulllengh_nums = []
+        self.save_data = {}
         self.pixelsize = 0
         self.cmx = 0
         self.cmy = 0    
         self.full_len = 0
-        self.save_data = {}
+
 
    
     def get_screensize(self):
@@ -149,16 +150,19 @@ class movlen:
         with open('data.json', 'w+') as outfile:
             json.dump(self.save_data, outfile)
     
-    def load_data(self):        
-        with open ('data.json', 'r+') as jsonfile:
-            tempkeys = json.load(jsonfile)
-            if(tempkeys == None) or (tempkeys == {}):
-                pass
-            else:
-                self.save_data = tempkeys
-                self.cmx = self.save_data["pixel_x"]
-                self.cmy = self.save_data["pixel_y"]
-                self.full_len = self.save_data["pixel_full_lengh"]
+    def load_data(self):    
+        try:
+            with open ('data.json', 'r+') as jsonfile:
+                tempkeys = json.load(jsonfile)
+                if(tempkeys == None) or (tempkeys == {}):
+                    pass
+                else:
+                    self.save_data = tempkeys
+                    self.cmx = self.save_data["pixel_x"]
+                    self.cmy = self.save_data["pixel_y"]
+                    self.full_len = self.save_data["pixel_full_lengh"]
+        except:
+            open('data.json', 'w+')
 
 
     def autosave(self):
@@ -167,13 +171,14 @@ class movlen:
             time.sleep(300)
                 
     def main(self):
+        self.get_screensize()
+        self.load_data()
         cmd_thread = Thread(target=self.cmd)
         cmd_thread.start()
         mouselog_thread = Thread(target=self.logmousemov)
         mouselog_thread.start()
         autosave_thread = Thread(target=self.autosave)
         autosave_thread.start()
-        self.get_screensize()
 
 if __name__ == "__main__":
     mov = movlen()
