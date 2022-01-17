@@ -74,12 +74,11 @@ class movlen:
             if i == "mov":
                 self.savedata()
                 print(self.convert(self.full_len * self.pixelsize, "full lengh moved on screen:"))
+                print(self.full_len)
                 print(self.convert(self.cmx * self.pixelsize, "lengh moved on x Axes:"))
                 print(self.convert(self.cmy * self.pixelsize, "lengh moved on y Axes:"))
             elif i == "screensize":
                 print(self.getscreensize())
-            elif i == "load":
-                self.load_data()
             elif i == "help":
                 print("mov: calculates the distance you moved on your screen in cm")
                 print("screensize: prints the physical screen size in cm")
